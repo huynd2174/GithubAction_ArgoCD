@@ -1,25 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-service
+  name: {{ .Values.helloSpringK8s.name }}
+  namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hello-service
+      app: {{ .Values.helloSpringK8s.name }}
   template:
     metadata:
       labels:
-        app: hello-service
+        app: {{ .Values.helloSpringK8s.name }}
     spec:
       containers:
-      - name: hello-service
-        image: ghcr.io/datphan06/top-spring-on-kubernetes-hello-service:latest
+      - name: {{ .Values.helloSpringK8s.name }}
+        image: {{ .Values.helloSpringK8s.image.repository }}:{{ .Values.helloSpringK8s.image.tag }}
+        imagePullPolicy: {{ .Values.helloSpringK8s.image.pullPolicy }}
         ports:
         - containerPort: 8080
         envFrom:
         - configMapRef:
-            name: hello-service-config
+            name: docker-config
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness
@@ -31,4 +33,6 @@ spec:
             path: /actuator/health/readiness
             port: 8080
           initialDelaySeconds: 30
-          periodSeconds: 10 
+          periodSeconds: 10
+        resources:
+          {{- toYaml .Values.helloSpringK8s.resources | nindent 12 }} 

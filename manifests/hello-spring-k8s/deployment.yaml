@@ -1,25 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-service
+  name: hello-spring-k8s
+  namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hello-service
+      app: hello-spring-k8s
   template:
     metadata:
       labels:
-        app: hello-service
+        app: hello-spring-k8s
     spec:
       containers:
-      - name: hello-service
-        image: ghcr.io/datphan06/top-spring-on-kubernetes-hello-service:latest
+      - name: hello-spring-k8s
+        image: ${DOCKERHUB_USERNAME}/hello-spring-k8s:latest
         ports:
         - containerPort: 8080
         envFrom:
         - configMapRef:
-            name: hello-service-config
+            name: docker-config
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness
@@ -31,4 +32,11 @@ spec:
             path: /actuator/health/readiness
             port: 8080
           initialDelaySeconds: 30
-          periodSeconds: 10 
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m" 
