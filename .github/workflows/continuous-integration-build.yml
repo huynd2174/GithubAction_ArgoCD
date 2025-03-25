@@ -23,6 +23,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Grant execute permission for Maven Wrapper
+        run: chmod +x ./hello-spring-k8s/mvnw ./hello-caller/mvnw
+
       - name: Build Hello Spring K8S
         working-directory: ./hello-spring-k8s
         run: ./mvnw clean package
@@ -31,21 +34,18 @@ jobs:
         working-directory: ./hello-caller
         run: ./mvnw clean package
 
-      # Đăng nhập Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Build và Push Docker image cho hello-spring-k8s
       - name: Build and Push Hello Spring K8S Docker image
         working-directory: ./hello-spring-k8s
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-spring-k8s:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/hello-spring-k8s:latest
 
-      # Build và Push Docker image cho hello-caller
       - name: Build and Push Hello Caller Docker image
         working-directory: ./hello-caller
         run: |
