@@ -46,7 +46,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build and push Hello Spring K8S image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./hello-spring-k8s
           push: true
@@ -54,7 +54,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
 
       - name: Build and push Hello Caller image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./hello-caller
           push: true
